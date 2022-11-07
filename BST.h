@@ -20,7 +20,9 @@ using namespace std;
 class BST {
 public:
     BST();
-    ~BST();
+    ~BST(); 
+    BST(TreeNode *nodePtr);
+
     void insert(int key);
     void deleteKey(int key);
     int getHeight();
@@ -28,8 +30,16 @@ public:
     void rangeSearch(int a, int b);
 
     void insert(const int key, TreeNode *&node);
-    void deleteKey(int key, TreeNode *&root);
+    void deleteKey(int key, TreeNode *&node);
 
+    int getHeight(TreeNode *node);
+    int countNumberOfNodes(TreeNode *&node);
+    void fillArray(int *arr, TreeNode *&node, int &index);
+    void getMedian(int *arr, TreeNode *&node, int &index, double &median);
+    int getNodeCount();
+    void destroyTree(TreeNode *&treePtr);
+    void rangeSearch(int a, int b, TreeNode *node);
+    void processLeftmost(TreeNode *&nodePtr, int &treeItem);
 
 
     TreeNode *root;
