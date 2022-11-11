@@ -4,9 +4,7 @@
 * ID: 22003981
 * Section : 1
 * Assignment : 2
-* Description :
- *
- *
+* Description : main class for the Binary Search Tree
 */
 
 #include <iostream>
@@ -33,7 +31,7 @@ int main() {
     tree.deleteKey(35);
     tree.deleteKey(40);
 
-    cout << "The median of the tree:\n" << tree.medianOfBST() << endl;
+    cout << "The median of the tree:\t" << tree.medianOfBST() << endl;
 
     tree.rangeSearch(5,43);
 
