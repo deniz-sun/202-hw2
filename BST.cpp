@@ -4,74 +4,21 @@
 * ID: 22003981
 * Section : 1
 * Assignment : 2
-* Description :
- *
- *
+* Description : the binary search tree class for all operations
 */
-
 
 #include "BST.h"
-
 // Default constructor
 BST::BST() : root(NULL) {
-
 }
-
-
 // Protected constructor
 BST::BST(TreeNode *nodePtr) : root(nodePtr) {
-
 }
-
-/**
-// Constructor
-BST::BST(const int& rootItem) {
-    root = new TreeNode(rootItem, NULL, NULL);
-}
-
-// Constructor
-BST::BST(const int& rootItem,
-                       BST& leftTree, BST& rightTree) {
-    root = new TreeNode(rootItem, NULL, NULL);
-    attachLeftSubtree(leftTree);
-    attachRightSubtree(rightTree);
-}
-
-void BST::attachLeftSubtree(BST& leftTree) {
-    // Assertion: nonempty tree; no left child
-    if (!isEmpty() && (root->left == NULL)) {
-        root->left = leftTree.root;
-        leftTree.root = NULL
-    }
-}
-
-void BST::attachRightSubtree(BST& rightTree) {
-    // Left as an exercise
-}
-// Copy constructor
-BST::BST(const BST& tree) {
-    copyTree(tree.root, root);
-}
-
-
-// Uses preorder traversal for the copy operation
-// (Visits first the node and then the left and right children)
-void BST::copyTree(TreeNode *treePtr, TreeNode *& newTreePtr) const {
-
-    if (treePtr != NULL) {		// copy node
-        newTreePtr = new TreeNode(treePtr->data, NULL, NULL);
-        copyTree(treePtr->left, newTreePtr->left);
-        copyTree(treePtr->right, newTreePtr->right);
-    }
-    else
-        newTreePtr = NULL;	// copy empty tree
-}
-
-*/
-
+//destructor
 BST::~BST() {
     destroyTree(root);
 }
+//destructs the tree by deleting left and right children recursively
 void BST::destroyTree(TreeNode *& treePtr) {
 
     if (treePtr != nullptr){
@@ -81,10 +28,12 @@ void BST::destroyTree(TreeNode *& treePtr) {
         treePtr = nullptr;
     }
 }
+//main insert function to call when inserting a new item
 void BST::insert(int key) {
     insert(key, root);
 
 }
+//helper insert function to call. it recursively finds the position to insert the data at
 void BST::insert(const int key, TreeNode *&node){
     //base case if there is no node
     if (node == nullptr)
@@ -95,12 +44,12 @@ void BST::insert(const int key, TreeNode *&node){
         else
             insert(key, node->right);
     }
-
 }
-
+//main delete function to call when deleting an item
 void BST::deleteKey(int key) {
     deleteKey(key, root);
 }
+//helper delete function to call, recursively goes through the left and right subtrees and
 void BST::deleteKey(int key, TreeNode *&node ){
     int replacementItem;
     //base case if the BST is empty
@@ -134,34 +83,40 @@ void BST::deleteKey(int key, TreeNode *&node ){
         else {
             processLeftmost(node->right,replacementItem);
             node->data = replacementItem;
-
         }
     }
-
 }
+// main function to get the height of a tree
 // height(T) = 1 + max{height(T1),height(T2),...,height(Tk)}
 int BST::getHeight() {
-    getHeight(root);
+    return getHeight(root);
 }
+// helper function to calculate the height through the given node
 int BST::getHeight(TreeNode *node) {
     if (node == nullptr)
         return 0;
     else
         return (1+ max(getHeight(node->right), getHeight(node->left)));
 }
-
+// main function to call for the median of a tree
 double BST::medianOfBST() {
     double median = 0.0;
-    int index = 0;
-    int *arr = new int[getNodeCount()];
-    getMedian(arr, root, index, median);
-    return median;
-}
+    if (root == nullptr)
+        return 0.0;
+    int numOfNodes = countNumberOfNodes(root);
+    if (numOfNodes == 1)
+        return double(root->data);
+    else if (numOfNodes % 2 == 1)
+        return medianCheck(root, (numOfNodes / 2) + 1);
+    else
+        return (medianCheck(root, numOfNodes / 2) + medianCheck(root, (numOfNodes / 2) + 1)) / 2;
 
+}
+// main function for range search function, checks if a node is between a and b
 void BST::rangeSearch(int a, int b) {
     rangeSearch(a, b, root);
 }
-
+// counts the number of nodes in a tree
 int BST::countNumberOfNodes(TreeNode *&node){
     //base case if there are no nodes
     if (node == nullptr)
@@ -169,27 +124,28 @@ int BST::countNumberOfNodes(TreeNode *&node){
     //keep incrementing until there are no nodes left
     return 1 + countNumberOfNodes(node->left) + countNumberOfNodes(node->right);
 }
+// main function for getting the total node count of a tree
 int BST::getNodeCount(){
     return countNumberOfNodes(root);
 }
-
-void BST::fillArray(int *arr, TreeNode *&node, int &index){
+// helper function for calculating the median of a tree
+double BST::medianCheck(TreeNode *node, int index){
+    int count;
     if (node == nullptr)
-        return;
-    fillArray(arr, node->left, index);
-    arr[index + 1] = node->data;
-    fillArray(arr, node->right, index);
+        return 0.0;
+    //count the left children
+    count = countNumberOfNodes(node->left);
+    //if there's only one node, that is the median
+    if (index == count + 1)
+        return node->data;
+    else if (count >= index)
+        return medianCheck(node->left, index);
+    else{
+        index = index - (count + 1);
+        return medianCheck(node->right, index);
+    }
 }
-void BST::getMedian(int *arr, TreeNode *&node, int &index, double &median){
-    int arraySize = countNumberOfNodes(root) - 1;
-    fillArray(arr, node, index);
-    if (arraySize % 2 == 0)
-        median = (arr[arraySize/2] + arr[arraySize/2] + 1) / 2;
-    else
-        median = arr[(arraySize+1) / 2];
-
-}
-
+// helper range search that checks if the node is between a and b
 void BST::rangeSearch(int a, int b, TreeNode *node){
     //base case if no nodes
     if (node == nullptr)
@@ -204,6 +160,7 @@ void BST::rangeSearch(int a, int b, TreeNode *node){
     if (node->data < b)
         rangeSearch(a, b, node->right);
 }
+// finds the leftmost node of the tree
 void BST::processLeftmost(TreeNode *&nodePtr, int &treeItem){
 
     if (nodePtr->left == nullptr) {
